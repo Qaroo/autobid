@@ -41,7 +41,7 @@ def send_sms(phones, message_code):
         print(f"Failed with status code {response.status_code}")
         print(response.text)  # For additional error details
 
-send_sms(["0533349945"],"2")
+#send_sms(["0533349945"],"2")
 
 
 #Sending sms on:
@@ -54,3 +54,14 @@ send_sms(["0533349945"],"2")
 #When the car is ready.
 #When the mechanic started working on the car
 
+url = "http://127.0.0.1:1001/messagesystem"
+data = {
+    "receivers":["0505506566"],
+    "type":"0",
+    "test":True
+}
+res = requests.post(url, json=data)
+print(res)
+print(res.status_code)
+print(res.text)
+print(res.json)

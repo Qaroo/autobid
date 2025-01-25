@@ -27,13 +27,17 @@ def find_car(car_id):
     }
     return ({"message": "Success!", "data":xa})
 
-token = "eyJ0eXAiOiJqd3QiLCJhbGciOiJIUzI1NiJ9.eyJmaXJzdF9rZXkiOiI3MjM0NSIsInNlY29uZF9rZXkiOiIzODMzMzMxIiwiaXNzdWVkQXQiOiIyMy0wMS0yMDI1IDE0OjI5OjIwIiwidHRsIjo2MzA3MjAwMH0.BDKP-U2A7aVwMLx9On1e1c7h8EQskPIr4HDRXdvnkn8"
-url = "https://019sms.co.il/api/test"
-headers = {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer " + token
-}
-def send_sms(phones, message_code):
+
+def send_sms(phones, message_code, test):
+    token = "eyJ0eXAiOiJqd3QiLCJhbGciOiJIUzI1NiJ9.eyJmaXJzdF9rZXkiOiI3MjM0NSIsInNlY29uZF9rZXkiOiIzODMzMzMxIiwiaXNzdWVkQXQiOiIyMy0wMS0yMDI1IDE0OjI5OjIwIiwidHRsIjo2MzA3MjAwMH0.BDKP-U2A7aVwMLx9On1e1c7h8EQskPIr4HDRXdvnkn8"
+    url = "https://019sms.co.il/api/test"
+    if not test:
+        url = "https://019sms.co.il/api"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+    }
+
     messages = {
         '0': "התקבלה בקשת תיקון חדשה, לחץ על הקישור על מנת לצפות בפרטים.",
         '1': "הצעת מחיר שהגשת התקבלה, לחץ על הקישור כדי לצפות בפרטים.",
@@ -64,11 +68,11 @@ def send_sms(phones, message_code):
     if response.status_code == 200:
         print("Request was successful!")
         print(response.json())  # For JSON response
-        return jsonify({"message": "ההודעה נשלחה בהצלחה"}), 200
+        return jsonify({"message": "Message sent successfully"}), 200
     else:
         print(f"Failed with status code {response.status_code}")
         print(response.text)  # For additional error details
-        return jsonify({"message": "הייתה שגיאה בשליחת ההודעה"}), 500
+        return jsonify({"message": "Error sending message"}), 500
 
 
 @app.route('/')
@@ -80,14 +84,15 @@ def findcar(id):
     return jsonify(find_car(id))
 
 @app.route('/messagesystem', methods=["POST"])
-def sending_sms(id):
+def sending_sms():
+    test = request.json.get("test")
     phones = request.json.get("receivers")
     message_type = request.json.get("type")
     if not phones or not message_type:
-        return jsonify({"message": "הייתה שגיאה בשליחת ההודעה, שדה שגוי"}), 500
-    status = send_sms(phones, message_type)
+        return jsonify({"message": f"Error sending message (Field error) {phones} + ${message_type}"}), 500
+    status = send_sms(phones, message_type, test)
     return status
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000)
     #app.run()
