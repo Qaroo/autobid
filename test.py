@@ -54,11 +54,11 @@ def send_sms(phones, message_code):
 #When the car is ready.
 #When the mechanic started working on the car
 
-url = "http://127.0.0.1:1001/messagesystem"
+url = "http://127.0.0.1:5001/messagesystem"
 data = {
     "receivers":["0505506566"],
-    "type":"0",
-    "test":True
+    "type":"1",
+    "test":False
 }
 res = requests.post(url, json=data)
 print(res)
